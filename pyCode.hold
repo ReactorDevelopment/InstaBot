@@ -1,0 +1,24 @@
+innerElement = self.bot.find_element(By.XPATH,
+     "/html/body/div[1]/div/div[1]/div/div[1]/div/div/div[1]/"
+     "div[1]/div/section/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div")
+messages = self.bot.execute_script(f"""
+        messages = []
+        for(let i in arguments[0].children){{
+            try{{
+                if(
+                let currElem = arguments[0].children[arguments[0].children.length-1-i].children[1];
+                if(!currElem) continue;
+                let msgText = currElem.innerText;
+                if(arguments[0].children[arguments[0].children.length-1-i].innerHTML.includes("img")){{
+                    console.log(arguments[1]+": "+msgText);
+                    let tmp = {{}};
+                    messages.push({{"user": arguments[1], "message": msgText}})
+                }}
+                else{{
+                    console.log("Me: "+msgText);
+                    messages.push({{"user": "me", "message": msgText}})
+                }}
+            }}catch(e){{continue;}}
+        }}
+        return messages
+        """, innerElement, self.activeUser)
